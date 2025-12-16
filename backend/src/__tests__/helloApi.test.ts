@@ -1,8 +1,9 @@
 import request from 'supertest';
 import app from '../index';
+import { pool } from '../db';
 
 describe('GET /api/hello', () => {
-  it('responds with the message from data.txt', async () => {
+  it('responds with the message from the database', async () => {
     const response = await request(app).get('/api/hello');
 
     expect(response.status).toBe(200);
@@ -10,4 +11,8 @@ describe('GET /api/hello', () => {
   });
 });
 
+// Ensure we clean up the PostgreSQL pool so Jest can exit cleanly.
+afterAll(async () => {
+  await pool.end();
+});
 

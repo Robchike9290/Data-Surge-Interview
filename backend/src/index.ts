@@ -21,9 +21,13 @@ app.get('/api/hello', async (req: Request, res: Response) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Only start the HTTP server when this file is executed directly,
+// so that tests can import the app without creating a long-lived listener.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}
 
 export default app;
 
