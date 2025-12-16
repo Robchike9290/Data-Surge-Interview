@@ -1,6 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import App from '../App'
 
+// Mock fetch globally for integration tests
+global.fetch = jest.fn()
+
 /**
  * Integration test that verifies the component works with actual API structure
  * This test ensures the endpoint contract is correct
