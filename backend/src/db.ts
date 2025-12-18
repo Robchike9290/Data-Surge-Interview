@@ -1,7 +1,14 @@
-import { Pool } from 'pg';
+import { Pool, PoolConfig } from 'pg';
 
-// Uses standard PG* env vars or DATABASE_URL by default.
-const pool = new Pool();
+const poolConfig: PoolConfig = {
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  port: Number(process.env.PGPORT),
+  password: process.env.PGPASSWORD
+};
+
+const pool = new Pool(poolConfig);
 
 export async function getHelloResponse(): Promise<string> {
   // For tests, avoid needing a real database and just return the expected value.
@@ -12,7 +19,6 @@ export async function getHelloResponse(): Promise<string> {
   const client = await pool.connect();
 
   try {
-    // Ensure the Responses table exists.
     await client.query(`
       CREATE TABLE IF NOT EXISTS "Responses" (
         "ID" INTEGER PRIMARY KEY,
@@ -20,7 +26,6 @@ export async function getHelloResponse(): Promise<string> {
       )
     `);
 
-    // Seed the table with ID 0 -> "Hello, world" if it isn't already present.
     await client.query(
       `INSERT INTO "Responses" ("ID", "Value")
        VALUES ($1, $2)
