@@ -59,7 +59,7 @@ describe('App Component', () => {
     })
   })
 
-  it('calls the correct API endpoint', async () => {
+  it('calls the correct API hello endpoint', async () => {
     const mockResponse = { message: 'Hello, world' }
     ;(global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
@@ -70,6 +70,20 @@ describe('App Component', () => {
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith('/api/hello')
+    })
+  })
+
+  it('calls the correct API authorInfo endpoint', async () => {
+    const mockResponse = { message: 'Created by Robert Czajka' }
+    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockResponse,
+    })
+
+    render(<App />)
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/authorInfo')
     })
   })
 })

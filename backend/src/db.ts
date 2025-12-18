@@ -48,6 +48,43 @@ export async function getHelloResponse(): Promise<string> {
   }
 }
 
+export async function getAuthorResponse(): Promise<string> {
+  if (process.env.NODE_ENV === 'test') {
+    return 'Created by Robert Czajka';
+  }
+
+  const client = await pool.connect();
+
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS "Responses" (
+        "ID" INTEGER PRIMARY KEY,
+        "Value" TEXT NOT NULL
+      )
+    `);
+
+    await client.query(`
+      INSERT INTO "Responses" ("ID", "Value")
+      VALUES ($1, $2)
+      ON CONFLICT ("ID") DO NOTHING`,
+      [1, 'Created by Robert Czajka']
+    );
+
+    const result = await client.query(`
+      SELECT "Value" FROM "Responses" 
+      WHERE "ID" = $1`, [1]
+    )
+
+    if (result.rows.length === 0) {
+      throw new Error('No response found for ID 1')
+    }
+
+    return result.rows[0].Value as string;
+  } finally {
+    client.release();
+  }
+}
+
 export { pool };
 
 
