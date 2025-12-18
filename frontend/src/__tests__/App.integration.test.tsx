@@ -1,13 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import App from '../App'
 
-// Mock fetch globally for integration tests
 global.fetch = jest.fn()
 
-/**
- * Integration test that verifies the component works with actual API structure
- * This test ensures the endpoint contract is correct
- */
 describe('App Component - Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -27,7 +22,6 @@ describe('App Component - Integration Tests', () => {
       expect(heading).toHaveTextContent('Hello, world')
     })
 
-    // Verify the message is displayed in an h1 element
     const heading = screen.getByRole('heading', { level: 1 })
     expect(heading).toBeInTheDocument()
     expect(heading).toHaveClass('text-5xl', 'font-bold')
@@ -43,16 +37,13 @@ describe('App Component - Integration Tests', () => {
 
     render(<App />)
 
-    // Should show loading initially
     expect(screen.getByText('Loading...')).toBeInTheDocument()
 
-    // Resolve the promise
     resolvePromise!({
       ok: true,
       json: async () => ({ message: 'Hello, world' }),
     })
 
-    // Should show message after loading
     await waitFor(() => {
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument()
       expect(screen.getByText('Hello, world')).toBeInTheDocument()

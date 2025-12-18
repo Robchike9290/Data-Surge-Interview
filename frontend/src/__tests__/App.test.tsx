@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import App from '../App'
 
-// Mock fetch globally
 global.fetch = jest.fn()
 
 describe('App Component', () => {
